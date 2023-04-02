@@ -11,8 +11,16 @@ timersRouter.get('/', async (_req, res, next) => {
 });
 
 timersRouter.post('/', async (req, res, next) => {
-  const { startAt, endAt } = req.body as { startAt: string, endAt: string };
-  const timer = new Timer({ startAt, endAt });
+  const { 
+    hours, 
+    minutes, 
+    machine,
+  } = req.body as { 
+    hours: string;
+    minutes: string;
+    machine: string;
+  };
+  const timer = new Timer({ minutes, hours, machine });
   await timer.save();
   res.status(201).json({ timer });
   next();
