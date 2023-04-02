@@ -6,7 +6,7 @@ export const timersRouter = Router();
 timersRouter.get('/', async (_req, res, next) => {
   const timers = await Timer.find();
   const count = await Timer.count();
-  res.status(200).json({ items: timers, count });
+  res.status(200).json({ timersList: { items: timers, count } });
   next();
 });
 
