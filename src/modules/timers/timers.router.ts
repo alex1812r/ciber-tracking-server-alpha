@@ -4,8 +4,11 @@ import { Timer } from './schemas/timer.schema';
 export const timersRouter = Router();
 
 timersRouter.get('/', async (_req, res, next) => {
-  const timers = await Timer.find().sort({ createdAt: 'desc' });
-  const count = await Timer.count();
+  const timers = await Timer
+    .find()
+    .where({ deletedAt: null })
+    .sort({ createdAt: 'desc' });
+  const count = await Timer.count().where({ deletedAt: null });
   res.status(200).json({ timersList: { items: timers, count } });
   next();
 });
@@ -25,3 +28,10 @@ timersRouter.post('/', async (req, res, next) => {
   res.status(201).json({ timer });
   next();
 })
+
+timersRouter.delete('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  await Timer.updateOne({ _id: id }, { deletedAt: new Date() })
+  res.status(200).json({})
+  next();
+});
