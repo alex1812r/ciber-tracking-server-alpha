@@ -8,7 +8,13 @@ export const TimerSchema = new Schema({
   minutes: Number,
   hours: Number,
   amount: Number,
+  addControl: {
+    type: Boolean,
+    default: false,
+  },
   deletedAt: Date,
+  comment: String,
+  paymentMethod: String
 }, { timestamps: true })
 
 TimerSchema.pre('save', function() {
@@ -28,10 +34,13 @@ TimerSchema.pre('save', function() {
   // }
   if(typeof this.minutes === 'number' && typeof this.hours === 'number') {
     const minutes30Count = Math.ceil(this.minutes / 30)
-    const amount = (this.hours * 2) + (minutes30Count * 1);
+    const amount = (this.hours * 2) + minutes30Count;
     this.startAt = moment().toDate();
     this.endAt = moment(this.startAt).add(this.minutes, 'minutes').add(this.hours, 'hours').toDate();
     this.amount = amount;
+    if (this.addControl) {
+      this.amount += this.hours + minutes30Count;
+    }
   }
 
 });

@@ -18,12 +18,25 @@ timersRouter.post('/', async (req, res, next) => {
     hours, 
     minutes, 
     machine,
+    paymentMethod,
+    addControl,
+    comment
   } = req.body as { 
     hours: string;
     minutes: string;
     machine: string;
+    paymentMethod: string;
+    addControl: boolean;
+    comment: string
   };
-  const timer = new Timer({ minutes, hours, machine });
+  const timer = new Timer({ 
+    minutes, 
+    hours, 
+    machine, 
+    paymentMethod,
+    addControl,
+    comment
+  });
   await timer.save();
   res.status(201).json({ timer });
   next();
