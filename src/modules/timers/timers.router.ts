@@ -4,14 +4,15 @@ import moment from 'moment';
 
 export const timersRouter = Router();
 
-timersRouter.get('/', async (_req, res, next) => {
+timersRouter.get('/', async (req, res, next) => {
+  const { date } = req.query as { date?: string };
   const timers = await Timer
     .find()
     .where({ 
       deletedAt: null,
       createdAt: {
-        $gte: moment(moment().format('YYYY/MM/DD 00:00:01')).toDate(), 
-        $lt: moment(moment().format('YYYY/MM/DD 23:59:59')).toDate()
+        $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
+        $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
       }
     })
     .sort({ createdAt: 'desc' });
@@ -19,8 +20,8 @@ timersRouter.get('/', async (_req, res, next) => {
     .where({
       deletedAt: null,
       createdAt: {
-        $gte: moment(moment().format('YYYY/MM/DD 00:00:01')).toDate(), 
-        $lt: moment(moment().format('YYYY/MM/DD 23:59:59')).toDate()
+        $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
+        $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
       }
     });
   res.status(200).json({ timersList: { items: timers, count } });
