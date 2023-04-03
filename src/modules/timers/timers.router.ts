@@ -1,14 +1,28 @@
 import { Router } from 'express';
 import { Timer } from './schemas/timer.schema';
+import moment from 'moment';
 
 export const timersRouter = Router();
 
 timersRouter.get('/', async (_req, res, next) => {
   const timers = await Timer
     .find()
-    .where({ deletedAt: null })
+    .where({ 
+      deletedAt: null,
+      createdAt: {
+        $gte: moment(moment().format('YYYY/MM/DD 00:00:01')).toDate(), 
+        $lt: moment(moment().format('YYYY/MM/DD 23:59:59')).toDate()
+      }
+    })
     .sort({ createdAt: 'desc' });
-  const count = await Timer.count().where({ deletedAt: null });
+  const count = await Timer.count()
+    .where({
+      deletedAt: null,
+      createdAt: {
+        $gte: moment(moment().format('YYYY/MM/DD 00:00:01')).toDate(), 
+        $lt: moment(moment().format('YYYY/MM/DD 23:59:59')).toDate()
+      }
+    });
   res.status(200).json({ timersList: { items: timers, count } });
   next();
 });
