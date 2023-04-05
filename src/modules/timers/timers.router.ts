@@ -28,6 +28,17 @@ timersRouter.get('/', async (req, res, next) => {
   next();
 });
 
+timersRouter.get('/:id', async (req, res, next) => {
+  const { id } = req.params as { id: string };
+  const timer = await Timer.findOne().where({ _id: id })
+  if (!timer) {
+    res.status(404).send('timer not found');
+    return;
+  }
+  res.status(200).json({ timer });
+  next()
+});
+
 timersRouter.post('/', async (req, res, next) => {
   const { 
     hours, 
@@ -56,6 +67,38 @@ timersRouter.post('/', async (req, res, next) => {
   res.status(201).json({ timer });
   next();
 })
+
+timersRouter.put('/:id', async (req, res, next) => {
+  const { id } = req.params as { id: string };
+  const timer = await Timer.findOne().where({ _id: id })
+  if (!timer) {
+    res.status(404).send('timer not found');
+    return;
+  }
+
+  const { 
+    machine,
+    paymentMethod,
+    comment
+  } = req.body as { 
+    machine: string;
+    paymentMethod: string;
+    comment: string
+  };
+
+  await Timer.updateOne({ _id: id }, {
+    machine,
+    paymentMethod,
+    comment
+  })
+  
+  timer.machine = machine;
+  timer.comment = comment;
+  timer.paymentMethod = paymentMethod;
+
+  res.status(200).json({ timer });
+  next()
+});
 
 timersRouter.delete('/:id', async (req, res, next) => {
   const { id } = req.params;

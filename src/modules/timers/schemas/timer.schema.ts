@@ -18,6 +18,7 @@ export const TimerSchema = new Schema({
 }, { timestamps: true })
 
 TimerSchema.pre('save', function() {
+  console.log('pre save')
   // if(this.startAt && this.endAt) {
   //   const moment1 = moment(this.startAt);
   //   const moment2 = moment(this.endAt);
