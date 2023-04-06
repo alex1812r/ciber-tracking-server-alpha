@@ -10,18 +10,18 @@ timersRouter.get('/', async (req, res, next) => {
     .find()
     .where({ 
       deletedAt: null,
-      createdAt: {
-        $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
-        $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
+      startAt: {
+        $gte: moment(date).startOf('day').toDate(), 
+        $lt: moment(date).endOf('day').toDate()
       }
     })
     .sort({ createdAt: 'desc' });
   const count = await Timer.count()
     .where({
       deletedAt: null,
-      createdAt: {
-        $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
-        $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
+      startAt: {
+        $gte: moment(date).startOf('day').toDate(), 
+        $lt: moment(date).endOf('day').toDate()
       }
     });
   res.status(200).json({ timersList: { items: timers, count } });
