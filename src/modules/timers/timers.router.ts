@@ -6,24 +6,22 @@ export const timersRouter = Router();
 
 timersRouter.get('/', async (req, res, next) => {
   const { date } = req.query as { date?: string };
-  const timers = await Timer
-    .find()
-    .where({ 
-      deletedAt: null,
-      startAt: {
-        $gte: moment(date).startOf('day').toDate(), 
-        $lt: moment(date).endOf('day').toDate()
-      }
-    })
-    .sort({ createdAt: 'desc' });
-  const count = await Timer.count()
-    .where({
-      deletedAt: null,
-      startAt: {
-        $gte: moment(date).startOf('day').toDate(), 
-        $lt: moment(date).endOf('day').toDate()
-      }
-    });
+  const where = {
+    deletedAt: null,
+    startAt: {
+      $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
+      $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
+    }
+  }
+
+  const [timers, count] = await Promise.all([
+    Timer
+      .find()
+      .where(where)
+      .sort({ createdAt: 'desc' }),
+      Timer.count()
+        .where(where)
+  ])
   res.status(200).json({ timersList: { items: timers, count } });
   next();
 });
