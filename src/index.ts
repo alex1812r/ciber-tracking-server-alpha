@@ -14,6 +14,10 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true }));
   app.use('/api', apiRouter);
 
+  app.get('/', (_req, res) => {
+    res.status(200).send('hello world!')
+  })
+
   app.listen(PORT, () => {
     console.log(`SERVER ON PORT ${PORT}`)
   });
