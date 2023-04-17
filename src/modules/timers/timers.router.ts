@@ -6,11 +6,14 @@ export const timersRouter = Router();
 
 timersRouter.get('/', async (req, res, next) => {
   const { date } = req.query as { date?: string };
+  const startDay = moment(date).startOf('day');
+  const endDay = moment(date).endOf('day');
+
   const where = {
     deletedAt: null,
     startAt: {
-      $gte: moment(moment(date).format('DD/MM/YYYY 00:00:01')).toDate(), 
-      $lt: moment(moment(date).format('DD/MM/YYYY 23:59:59')).toDate()
+      $gte: startDay.toDate(), 
+      $lt: endDay.toDate()
     }
   }
 
